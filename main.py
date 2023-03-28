@@ -2,14 +2,10 @@ from PIL import Image, ImageDraw, ImageFont
 import easyocr
 import cv2
 
-
-img1 = cv2.imread('sign_board.jpg')
-
-def text_recognition():
-    img1 = cv2.imread('redactor_bot\qw.jpg')
-    img = 'redactor_bot\qw.jpg'
+def text_recognition(path):
+    img1 = cv2.imread(path)
     reader = easyocr.Reader(["ru"])
-    result = reader.readtext(img)
+    result = reader.readtext(path)
 
     for (coord, text, prob) in result:
 
@@ -22,41 +18,52 @@ def text_recognition():
     
     return result
 
-def img_funk(img, item, result):
-    if (item == 1):
-        tx = result[5][0][0][0]
-        ty = result[5][0][0][1]
-        bx = result[5][0][2][0]
-        by = result[5][0][2][1]
-        print(tx,ty,bx,by)
+def find_str(result):
+    item = int(input("Введите строку: "))
+    str_of_coord = []
+    if (item >= 1):
+        tx = result[item-1][0][0][0]
+        ty = result[item-1][0][0][1]
+        bx = result[item-1][0][2][0]
+        by = result[item-1][0][2][1]
+    str_of_coord.extend([tx,ty,bx,by]) 
+    return str_of_coord
+    
 
-    for i in range(ty,by):
+def img_funk(img,str):
+    width = img.size[0]
+    height = img.size[1]
+    size = int(height / 5)
+
+    for i in range(str[1],str[3]):
         pix = img.getpixel((1, i))
-        for j in range(tx,bx):
+        for j in range(str[0],str[2]):
             if (img.getpixel((j, i))!=pix):
                 img.putpixel((j,i), pix) # Изменяем цвет пикселя
+    print(str[1]-str[3])
 
-    font = ImageFont.truetype('redactor_bot\ZenKakuGothicNew-Medium.ttf', size=60)
+    font = ImageFont.truetype('redactor_bot\ZenKakuGothicNew-Medium.ttf', size=(int((str[3]-str[1]) * 0.75281249999999)))
     draw_text = ImageDraw.Draw(img)
     draw_text.text(
-        (tx,ty),
-        'Самохин Роман А.',
-        fill=('#FFFFFF'),
+        (str[0],str[1]),
+        'Сохранить чееек',
+        fill=('#FFF'),
         align = "center",
         font=font
         )
     img.show()  
 
-    f = open("tmp.png", "wb")
+    f = open("redactor_bot\Tmp.png", "wb")
     img.save(f, "BMP")           # Передаем файловый объект
     f.close()
 
 
 def main():
-    a = text_recognition()
-    print(a)
-    print(a[4][0],a[4][1])
-    img_funk(Image.open("redactor_bot\qw.jpg"), 1, a)
+    path = "redactor_bot\est.jpg"
+    open_img = Image.open(path)
+    a = text_recognition(path)
+    str_coord = find_str(a)
+    img_funk(open_img, str_coord)
     
     
 if __name__ == "__main__":
