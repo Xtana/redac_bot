@@ -31,23 +31,18 @@ def find_str(result):
     
 
 def img_funk(img,str):
-    width = img.size[0]
-    height = img.size[1]
-    size = int(height / 5)
-
     for i in range(str[1],str[3]):
         pix = img.getpixel((1, i))
         for j in range(str[0],str[2]):
             if (img.getpixel((j, i))!=pix):
                 img.putpixel((j,i), pix) # Изменяем цвет пикселя
-    print(str[1]-str[3])
 
-    font = ImageFont.truetype('redactor_bot\ZenKakuGothicNew-Medium.ttf', size=(int((str[3]-str[1]) * 0.75281249999999)))
+    font = ImageFont.truetype('redactor_bot\ZenKakuGothicNew-Medium.ttf', size=(int((str[3]-str[1]) * 0.75281249999999))+3)
     draw_text = ImageDraw.Draw(img)
     draw_text.text(
         (str[0],str[1]),
-        'Сохранить чееек',
-        fill=('#FFF'),
+        'Анна',
+        fill=('#1B994C'),
         align = "center",
         font=font
         )
@@ -59,9 +54,10 @@ def img_funk(img,str):
 
 
 def main():
-    path = "redactor_bot\est.jpg"
+    path = "redactor_bot\qw.png"
     open_img = Image.open(path)
     a = text_recognition(path)
+    print(a)
     str_coord = find_str(a)
     img_funk(open_img, str_coord)
     
